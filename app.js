@@ -28,9 +28,9 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true }));
 express.urlencoded({ extended: false });
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-}
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static("client/build"));
+// }
 
 module.exports = app;
 

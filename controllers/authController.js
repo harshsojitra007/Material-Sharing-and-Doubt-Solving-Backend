@@ -76,7 +76,7 @@ exports.signup = catchAsync(async (req, res) => {
     await UnverifiedUser.create({ name: name, email: email, password: hashedPassword, token: token });
 
     const verificationURL = `${process.env.BACKEND_BASE_URL}/user/verify?user=${name}&token=${token}`;
-    const reportURL = `${process.env.FRONTEND_BASE_URL}/CodeStudy/report`;
+    const reportURL = `${process.env.FRONTEND_BASE_URL}/report`;
 
     const message = `
     <html>
@@ -130,10 +130,11 @@ exports.verifyAccount = catchAsync(async (req, res) => {
       } else {
         const user = await UnverifiedUser.findOne({ name: data.id });
         if (!user) {
-          response.message = "Account is already verified!";
-          response.isError = false;
-          response.status = 204;
-          res.redirect(`${process.env.FRONTEND_BASE_URL}/CodeStudy/response?message=${response.message}&navigate=${true}&error=${response.isError}&status=${response.status}`);
+          // response.message = "Account is already verified!";
+          // response.isError = false;
+          // response.status = 204;
+          // res.redirect(`${process.env.FRONTEND_BASE_URL}/response?message=${response.message}&navigate=${true}&error=${response.isError}&status=${response.status}`);
+          res.send("Account is already verified!");
           return;
         }
         await UnverifiedUser.findOneAndDelete({ name: data.id });
@@ -149,10 +150,11 @@ exports.verifyAccount = catchAsync(async (req, res) => {
         response.message = "Your Account is Verified Successfully :) Please wait you will automatically be redirected to login page";
         response.status = 201;
       }
-      res.redirect(`${process.env.FRONTEND_BASE_URL}/CodeStudy/response?message=${response.message}&navigate=${true}&error=${false}`);
+      // res.redirect(`${process.env.FRONTEND_BASE_URL}/response?message=${response.message}&navigate=${true}&error=${false}`);
+      res.send(response.message);
     });
   } catch (err) {
-    res.redirect(`${process.env.FRONTEND_BASE_URL}/CodeStudy/response?status=503`);
+    res.redirect(`${process.env.FRONTEND_BASE_URL}/response?status=503`);
   }
 });
 
@@ -193,8 +195,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-  const resetURL = `${process.env.FRONTEND_BASE_URL}/CodeStudy/new/password?id=${resetToken}/`;
-  const reportURL = `${process.env.FRONTEND_BASE_URL}/CodeStudy/report`;
+  const resetURL = `${process.env.FRONTEND_BASE_URL}/new/password?id=${resetToken}/`;
+  const reportURL = `${process.env.FRONTEND_BASE_URL}/report`;
 
   let message = `Forgot your password ? submit a PATCH request with your new password and password confirm to ${resetURL}`;
   message = `<html>

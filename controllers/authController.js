@@ -45,6 +45,7 @@ exports.signup = catchAsync(async (req, res) => {
     verifiedUser = await User.findOne({ email: email });
     if (verifiedUser) {
       res.status(409).json("User already exist with provided Email!!");
+      return;
     }
 
     let findUser = await UnverifiedUser.findOne({ name: name });
@@ -129,7 +130,10 @@ exports.verifyAccount = catchAsync(async (req, res) => {
       } else {
         const user = await UnverifiedUser.findOne({ name: data.id });
         if (!user) {
-          res.redirect(`${process.env.FRONTEND_BASE_URL}/CodeStudy/response?status=100`);
+          response.message = "Account is already verified!";
+          response.isError = false;
+          response.status = 204;
+          res.redirect(`${process.env.FRONTEND_BASE_URL}/CodeStudy/response?message=${response.message}&navigate=${true}&error=${response.isError}&status=${response.status}`);
           return;
         }
         await UnverifiedUser.findOneAndDelete({ name: data.id });

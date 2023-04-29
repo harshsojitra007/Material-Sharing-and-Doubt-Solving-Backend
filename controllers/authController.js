@@ -75,7 +75,7 @@ exports.signup = catchAsync(async (req, res) => {
     await UnverifiedUser.create({ name: name, email: email, password: hashedPassword, token: token });
 
     const verificationURL = `http://localhost:5000/user/verify?user=${name}&token=${token}`;
-    const reportURL = `http://localhost:3000/report`;
+    const reportURL = `${process.env.FRONTEND_BASE_URL}/report`;
 
     const message = `
     <html>
@@ -129,7 +129,7 @@ exports.verifyAccount = catchAsync(async (req, res) => {
       } else {
         const user = await UnverifiedUser.findOne({ name: data.id });
         if (!user) {
-          res.redirect(`http://localhost:3000/response?status=100`);
+          res.redirect(`${process.env.FRONTEND_BASE_URL}/response?status=100`);
           return;
         }
         await UnverifiedUser.findOneAndDelete({ name: data.id });
@@ -145,10 +145,10 @@ exports.verifyAccount = catchAsync(async (req, res) => {
         response.message = "Your Account is Verified Successfully :) Please wait you will automatically be redirected to login page";
         response.status = 201;
       }
-      res.redirect(`http://localhost:3000/response?message=${response.message}&navigate=${true}&error=${false}`);
+      res.redirect(`${process.env.FRONTEND_BASE_URL}/response?message=${response.message}&navigate=${true}&error=${false}`);
     });
   } catch (err) {
-    res.redirect(`http://localhost:3000/response?status=503`);
+    res.redirect(`${process.env.FRONTEND_BASE_URL}/response?status=503`);
   }
 });
 
@@ -189,8 +189,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-  const resetURL = `http://localhost:3000/new/password?id=${resetToken}/`;
-  const reportURL = `http://localhost:3000/report`;
+  const resetURL = `${process.env.FRONTEND_BASE_URL}/new/password?id=${resetToken}/`;
+  const reportURL = `${process.env.FRONTEND_BASE_URL}/report`;
 
   let message = `Forgot your password ? submit a PATCH request with your new password and password confirm to ${resetURL}`;
   message = `<html>
